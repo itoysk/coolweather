@@ -1,5 +1,7 @@
 package com.coolweather.app.util;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,19 +26,25 @@ public class HttpUtil {
                     connection.setRequestMethod("GET");
                     connection.setConnectTimeout(8000);
                     connection.setReadTimeout(8000);
+
+                    //根据相关资料，此处设置避免出现EOFException
+                    connection.setRequestProperty( "Accept-Encoding", "" );
+
                     InputStream in = connection.getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                     StringBuilder response = new StringBuilder();
-                    String line = null;
+                    String line;
                     while ((line = reader.readLine()) != null) {
                         response.append(line);
                     }
+
+
+
                     if (listener != null) {
                         listener.onFinish(response.toString());
                     }
 
                 } catch (Exception e) {
-                    e.printStackTrace();
                     if (listener != null) {
                         listener.onError(e);
                     }
